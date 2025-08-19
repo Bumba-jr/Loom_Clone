@@ -1,0 +1,6 @@
+{
+  "databaseURL": "https://Bumba-jr-s-workspace-r3dfm3.eu-central-1.xata.sh/db/jsm_Snapcast",
+  "codegen": {
+    "output": "src/xata.ts"
+  }
+}

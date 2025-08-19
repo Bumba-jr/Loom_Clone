@@ -1,0 +1,857 @@
+Index: app/api/auth/[...all]/route.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/api/auth/[...all]/route.ts b/app/api/auth/[...all]/route.ts
+new file mode 100644
+--- /dev/null	(date 1755622184058)
++++ b/app/api/auth/[...all]/route.ts	(date 1755622184058)
+@@ -0,0 +1,4 @@
++import {toNextJsHandler} from "better-auth/next-js"
++import {auth} from "@/lib/auth";
++
++export const { GET, POST } = toNextJsHandler(auth.handler)
+\ No newline at end of file
+Index: components/Navbar.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/components/Navbar.tsx b/components/Navbar.tsx
+new file mode 100644
+--- /dev/null	(date 1755185273864)
++++ b/components/Navbar.tsx	(date 1755185273864)
+@@ -0,0 +1,33 @@
++'use client'
++
++import Link from "next/link";
++import Image from "next/image";
++import {useRouter} from "next/navigation";
++
++const user = {};
++
++const Navbar = () => {
++    const router = useRouter();
++    return (
++        <div className="navbar">
++            <nav>
++                <Link href="/" >
++                    <Image src="/assets/icons/logo.svg" alt="logo" width={32} height={32} />
++                    <h1>SnapCast</h1>
++                </Link>
++
++                {user && (
++                    <figure>
++                        <button onClick={() => router.push("/profile/123456")}>
++                            <Image src="/assets/images/dummy.jpg" alt="user" width={36} height={36} className="rounded-full aspect-square" />
++                        </button>
++                        <button className={"cursor-pointer"}>
++                            <Image src="/assets/icons/logout.svg" alt="logout" width={24} height={24} className="rotate-180" />
++                        </button>
++                    </figure>
++                )}
++            </nav>
++        </div>
++    )
++}
++export default Navbar
+Index: components/VideoCard.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/components/VideoCard.tsx b/components/VideoCard.tsx
+new file mode 100644
+--- /dev/null	(date 1755341018616)
++++ b/components/VideoCard.tsx	(date 1755341018616)
+@@ -0,0 +1,50 @@
++'use client'
++import Link from "next/link";
++import Image from "next/image";
++
++const VideoCard = ({
++                       id,
++                       title,
++                       thumbnail,
++                       userImg,
++                       username,
++                       createdAt,
++                       views,
++                       visibility,
++                       duration
++                   }) => {
++    return (
++        <Link href={`/video/${id}`} className={"video-card"}>
++            <Image src={thumbnail} alt={"thumbnail"} width={290} height={160} className={"thumbnail"} />
++            <article>
++                <div>
++                    <figure>
++                        <Image src={userImg} alt={"avatar"} width={34} height={34} className={"rounded-full aspect-square"} />
++                        <figcaption>
++                            <h3>{username}</h3>
++                            <h4>{visibility}</h4>
++                        </figcaption>
++                    </figure>
++                    <aside>
++                        <Image src={"/assets/icons/eye.svg"} alt={"views"} width={16} height={16} />
++                        <span>{views}</span>
++                    </aside>
++                </div>
++                <h2>{title} - {" "} {createdAt.toLocaleDateString('en-us', {
++                    year: 'numeric',
++                    month: 'short',
++                    day: 'numeric',
++                })}</h2>
++            </article>
++            <button onClick={()=> {}} className={"copy-btn"}>
++                <Image src={"/assets/icons/link.svg"} alt={"copy"} width={18} height={18} />
++            </button>
++            {duration && (
++                <div className={"duration"}>
++                    {Math.ceil(duration / 60)}min
++                </div>
++            )}
++        </Link>
++    )
++}
++export default VideoCard
+Index: components/Header.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/components/Header.tsx b/components/Header.tsx
+new file mode 100644
+--- /dev/null	(date 1755186869035)
++++ b/components/Header.tsx	(date 1755186869035)
+@@ -0,0 +1,49 @@
++import React from 'react'
++import Image from "next/image";
++import Link from "next/link";
++import {ICONS} from "@/constants";
++import DropdownList from "@/components/DropdownList";
++
++const userImg = {};
++
++const Header = ({subHeader, title, userImg}: SharedHeaderProps) => {
++    return (
++        <header className="header">
++            <section className={"header-container"}>
++                <div className={"details"}>
++                    {userImg && (
++                        <Image src={userImg  } alt="user"
++                               width={66} height={66} className="rounded-full"/>)}
++                    <article>
++                        <p>{subHeader}</p>
++                        <h1>{title}</h1>
++                    </article>
++                </div>
++
++                <aside>
++                    <Link href={"/upload"}>
++                        <Image src="/assets/icons/upload.svg" alt="upload" width={16} height={16}/>
++                        <span>Upload a video</span>
++                    </Link>
++                    <div className="record">
++                        <button className={"primary-btn"}>
++                            <Image src={ICONS.record} alt={"record"} width={16} height={16}/>
++                            <span>Record a video</span>
++                        </button>
++                    </div>
++                </aside>
++            </section>
++            <section className={"search-filter"}>
++                <div className={"search"}>
++                    <input type={"text"} placeholder={"SEarch for vidoes, tags, folders ... "} />
++                    <Image src={"/assets/icons/search.svg"} alt={"search"} width={16} height={16} />
++                </div>
++
++                <DropdownList />
++            </section>
++
++
++        </header>
++    )
++}
++export default Header
+Index: app/(root)/layout.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/(root)/layout.tsx b/app/(root)/layout.tsx
+new file mode 100644
+--- /dev/null	(date 1755179590809)
++++ b/app/(root)/layout.tsx	(date 1755179590809)
+@@ -0,0 +1,12 @@
++import React, {ReactNode} from 'react'
++import Navbar from "@/components/Navbar";
++
++const Layout = ({ children}: {children: ReactNode}) => {
++    return (
++        <div>
++            <Navbar />
++            {children}
++        </div>
++    )
++}
++export default Layout
+Index: lib/auth.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/auth.ts b/lib/auth.ts
+new file mode 100644
+--- /dev/null	(date 1755621266818)
++++ b/lib/auth.ts	(date 1755621266818)
+@@ -0,0 +1,25 @@
++import {betterAuth} from "better-auth";
++import {drizzleAdapter} from "better-auth/adapters/drizzle";
++import {db} from "@/drizzle/db";
++import {schema} from "@/drizzle/schema";
++import {nextCookies} from "better-auth/next-js";
++
++// Make sure environment variables are loaded
++if (!process.env.XATA_API_KEY) {
++    throw new Error('XATA_API_KEY environment variable is required');
++}
++
++export const auth = betterAuth({
++    database: drizzleAdapter(db, {
++        provider: 'pg',
++        schema: schema,
++    }),
++    socialProviders: {
++        google: {
++            clientId: process.env.NEXT_PUBLIC_CLIENT_ID!,
++            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
++        }
++    }w,
++    plugins: [nextCookies()],
++    baseURL: process.env.NEXT_PUBLIC_BASE_URL!,
++});
+\ No newline at end of file
+Index: components/DropdownList.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/components/DropdownList.tsx b/components/DropdownList.tsx
+new file mode 100644
+--- /dev/null	(date 1755188031150)
++++ b/components/DropdownList.tsx	(date 1755188031150)
+@@ -0,0 +1,33 @@
++'use client'
++
++import {useState} from "react";
++import Image from "next/image";
++
++const DropdownList = () => {
++    const [isOpen, setIsOpen] = useState(false);
++
++    return (
++        <div className={"relative"}>
++            <div className={"cursor-pointer"} onClick={()=> setIsOpen (!isOpen)}>
++                <div className={"filter-trigger"}>
++                     <figure>
++                         <Image src={"/assets/icons/hamburger.svg"} alt={"menu"} width={14} height={14} />
++                         Most recent
++                     </figure>
++                    <Image src={"/assets/icons/arrow-down.svg"} alt={"arrow down"} width={20} height={20} />
++                </div>
++            </div>
++
++    {isOpen && (
++        <ul className={"dropdown"}>
++            {['Most recent ', 'Most liked'].map ((option) => (
++                <li key={option} className={"list-item"}>
++                    {option}
++                </li>
++            ))}
++        </ul>
++    )}
++        </div>
++    )
++}
++export default DropdownList
+Index: app/(auth)/sign-in/page.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/(auth)/sign-in/page.tsx b/app/(auth)/sign-in/page.tsx
+new file mode 100644
+--- /dev/null	(date 1755622718578)
++++ b/app/(auth)/sign-in/page.tsx	(date 1755622718578)
+@@ -0,0 +1,58 @@
++'use client';
++
++import Link from "next/link";
++import Image from "next/image";
++import {authClient} from "@/lib/auth-client";
++
++const Page = () => {
++    const handleSignIn = async () => {
++        return await authClient.signIn.social({ provider: 'google'})
++    }
++
++    return (
++        <main className="sign-in">
++            <aside className={"testimonial"}>
++                <Link href={"/"}>
++                    <Image src={"/assets/icons/logo.svg"} alt="logo" width={32} height={32} />
++                    <h1>SnapCast</h1>
++                </Link>
++
++                <div className="description">
++                    <section>
++                        <figure>
++                            {Array.from({ length: 5}).map((_, index) =>(
++                                <Image src={"/assets/icons/star.svg"} alt={"Star"} width={20} height={20} key={index} />
++                            ))}
++                        </figure>
++                        <p>SnapCast makes screen recording easy. From quick walkthrough to full presentations, it's fast, smooth and shareable in seconds</p>
++
++                        <article>
++                            <Image src={"/assets/images/jason.png"} alt={"Jason"} width={64} height={64} className={"rounded-full aspect-square"} />
++
++                            <div>
++                                <h2>Jason Rivera</h2>
++                                <p>Product Designer, NovaByte</p>
++                            </div>
++                        </article>
++                    </section>
++                </div>
++                <p>Ⓒsnapcast {(new Date()).getFullYear()}</p>
++            </aside>
++
++            <aside className={"google-sign-in"}>
++                <section>
++                    <Link href={"/"}>
++                        <Image src={"/assets/icons/logo.svg"} alt={"logo"} width={40} height={40} />
++                        <h1>SnapCast</h1>
++                    </Link>
++                    <p>Create and share your very first <span>SnapCast Video</span> in no time!</p>
++                    <button onClick={handleSignIn}>
++                        <Image src={"/assets/icons/google.svg"} alt={"Google"} width={20} height={20} />
++                        <span>Sign in with Google</span>
++                    </button>
++                </section>
++            </aside>
++        </main>
++    )
++}
++export default Page
+Index: .idea/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/.gitignore b/.idea/.gitignore
+new file mode 100644
+--- /dev/null	(date 1755173421907)
++++ b/.idea/.gitignore	(date 1755173421907)
+@@ -0,0 +1,8 @@
++# Default ignored files
++/shelf/
++/workspace.xml
++# Editor-based HTTP Client requests
++/httpRequests/
++# Datasource local storage ignored files
++/dataSources/
++/dataSources.local.xml
+Index: index.d.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/index.d.ts b/index.d.ts
+new file mode 100644
+--- /dev/null	(date 1746535340000)
++++ b/index.d.ts	(date 1746535340000)
+@@ -0,0 +1,297 @@
++declare interface User {
++  name: string;
++  email: string;
++  emailVerified: boolean;
++  image?: string | null;
++  createdAt: Date;
++  updatedAt: Date;
++  id: string;
++}
++
++type VideoFormValues = {
++  title: string;
++  description: string;
++  tags: string;
++  visibility: "public" | "private";
++};
++
++declare interface FormFieldProps {
++  id: string;
++  label: string;
++  type?: string;
++  value: string;
++  onChange: (
++    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
++  ) => void;
++  placeholder?: string;
++  as?: "input" | "textarea" | "select";
++  options?: Array<{ value: string; label: string }>;
++}
++
++declare interface FileInputProps {
++  id: string;
++  label: string;
++  accept: string;
++  file: File | null;
++  previewUrl: string | null;
++  inputRef: React.RefObject<HTMLInputElement | null>;
++  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
++  onReset: () => void;
++  type: "video" | "image";
++}
++
++declare interface TranscriptEntry {
++  time: string;
++  text: string;
++}
++
++declare interface VideoFormValues {
++  title: string;
++  description: string;
++  tags: string;
++  visibility: "public" | "private";
++}
++declare interface NavbarProps {
++  user: User | undefined;
++}
++
++declare interface SearchResult {
++  video: {
++    id: string;
++    videoId: string;
++    title: string;
++    thumbnailUrl: string;
++  };
++  user: {
++    id: string;
++    name: string | null;
++    image: string | null;
++  } | null;
++}
++
++declare interface VideoCardProps {
++  id: string;
++  title: string;
++  thumbnail: string;
++  userImg: string;
++  username: string;
++  createdAt: Date;
++  views: number;
++  visibility: Visibility;
++  duration: number | null;
++}
++
++declare interface VideoDetailHeaderProps {
++  title: string;
++  createdAt: Date;
++  userImg: string | null | undefined;
++  username?: string;
++  videoId: string;
++  ownerId: string;
++  visibility: string;
++  thumbnailUrl: string;
++}
++
++declare interface VideoPlayerProps {
++  videoId: string;
++  className?: string;
++}
++declare interface VideoInfoProps {
++  transcript?: string;
++  title: string;
++  createdAt: Date;
++  description: string;
++  videoId: string;
++  videoUrl: string;
++}
++
++declare interface ImageWithFallbackProps extends Omit<ImageProps, "src"> {
++  fallback?: string;
++  alt: string;
++  src: string | null;
++}
++
++type Visibility = "public" | "private";
++
++declare interface VideoDetails {
++  videoId: string;
++  title: string;
++  description: string;
++  thumbnailUrl: string;
++  tags: string | string[];
++  visibility: Visibility;
++  duration?: number | null;
++}
++
++declare interface BunnyVideoResponse {
++  guid: string;
++  status: number;
++  encodeProgress?: number;
++}
++
++declare type ApiResponse<T> =
++  | ({ success: true; error: null } & T)
++  | { success: false; error: string };
++
++declare interface ApiFetchOptions {
++  method?: string;
++  headers?: Record<string, string>;
++  body?: object;
++  expectJson?: boolean;
++  bunnyType: "stream" | "storage";
++}
++
++declare interface BunnyStreamApiOptions {
++  method?: string;
++  body?: object;
++}
++
++declare interface VideoUploadUrlResponse {
++  videoId: string;
++  uploadUrl: string;
++  accessKey: string;
++}
++
++declare interface ThumbnailUploadUrlResponse {
++  uploadUrl: string;
++  cdnUrl: string;
++  accessKey: string;
++}
++
++declare interface VideoProcessingStatus {
++  isProcessed: boolean;
++  encodingProgress: number;
++  status: number;
++}
++
++declare interface VideoWithUserResult {
++  video: {
++    id: string;
++    videoId: string;
++    title: string;
++    description: string;
++    thumbnailUrl: string;
++    videoUrl: string;
++    userId: string;
++    views: number;
++    tags: string[];
++    visibility: Visibility;
++    createdAt: Date;
++    updatedAt: Date;
++  };
++  user: {
++    id: string;
++    name: string | null;
++    image: string | null;
++  };
++}
++
++declare interface VideoObject {
++  id: string;
++  videoId: string;
++  title: string;
++  description: string;
++  thumbnailUrl: string;
++  videoUrl: string;
++  userId: string;
++  views: number;
++  tags: string[];
++  visibility: Visibility;
++  createdAt: Date;
++  updatedAt: Date;
++}
++
++declare interface UserWithVideos {
++  user: {
++    id: string;
++    name: string | null;
++    image: string | null;
++    email: string | null;
++  };
++  videos: VideoObject[];
++  count: number;
++}
++
++declare interface ExtendedMediaStream extends MediaStream {
++  _originalStreams?: MediaStream[];
++}
++
++declare interface SharedHeaderProps {
++  subHeader: string;
++  title: string;
++  userImg?: string;
++}
++
++declare interface SharedHeaderProps {
++  subHeader: string;
++  title: string;
++  userImg?: string;
++}
++
++declare interface Params {
++  params: Promise<Record<string, string>>;
++}
++
++declare interface SearchParams {
++  searchParams: Promise<Record<string, string | undefined>>;
++}
++
++declare interface ParamsWithSearch {
++  params: Promise<Record<string, string>>;
++  searchParams: Promise<Record<string, string | undefined>>;
++}
++
++declare interface DropdownListProps {
++  options: string[];
++  selectedOption: string;
++  onOptionSelect: (option: string) => void;
++  triggerElement: ReactNode;
++}
++
++declare interface EmptyStateProps {
++  icon: string;
++  title: string;
++  description: string;
++}
++
++declare interface MediaStreams {
++  displayStream: MediaStream;
++  micStream: MediaStream | null;
++  hasDisplayAudio: boolean;
++}
++
++declare interface BunnyRecordingState {
++  isRecording: boolean;
++  recordedBlob: Blob | null;
++  recordedVideoUrl: string;
++  recordingDuration: number;
++}
++
++declare interface ExtendedMediaStream extends MediaStream {
++  _originalStreams?: MediaStream[];
++}
++
++// Types
++interface VideoQueryResult {
++  video: typeof videos.$inferSelect;
++  user: {
++    id: string;
++    name: string | null;
++    image: string | null;
++  };
++}
++
++interface PaginationResult<T> {
++  data: T[];
++  pagination: {
++    currentPage: number;
++    totalPages: number;
++    totalItems: number;
++    pageSize: number | unknown;
++  };
++}
++
++declare interface RecordingHandlers {
++  onDataAvailable: (e: BlobEvent) => void;
++  onStop: () => void;
++}
+Index: app/(root)/profile/[id]/page.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/(root)/profile/[id]/page.tsx b/app/(root)/profile/[id]/page.tsx
+new file mode 100644
+--- /dev/null	(date 1755342916382)
++++ b/app/(root)/profile/[id]/page.tsx	(date 1755342916382)
+@@ -0,0 +1,21 @@
++import Header from "@/components/Header";
++import {dummyCards} from "@/constants";
++import VideoCard from "@/components/VideoCard";
++
++const Page = async({ params}: paramsWithSearch) => {
++const { id } = await params;
++
++    return (
++        <div className={"wrapper page"}>
++            <Header subHeader={"iliyashatami20@gmail.com"} title={"Code | life"} userImg={"/assets/images/dummy.jpg"} />
++
++
++            <section className={"video-grid"}>
++                {dummyCards.map((card) =>(
++                    <VideoCard key={card.id} {...card} />
++                ))};
++            </section>
++        </div>
++    )
++}
++export default Page
+Index: app/(root)/video/[videoId]/page.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/(root)/video/[videoId]/page.tsx b/app/(root)/video/[videoId]/page.tsx
+new file mode 100644
+--- /dev/null	(date 1755343254160)
++++ b/app/(root)/video/[videoId]/page.tsx	(date 1755343254160)
+@@ -0,0 +1,10 @@
++import React from 'react'
++
++const Page = () => {
++    return (
++        <main className={"wrapper page"}>
++            VIDEO DETAILS PAGE
++        </main>
++    )
++}
++export default Page
+Index: drizzle/db.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/drizzle/db.ts b/drizzle/db.ts
+new file mode 100644
+--- /dev/null	(date 1755587167272)
++++ b/drizzle/db.ts	(date 1755587167272)
+@@ -0,0 +1,6 @@
++import { drizzle } from 'drizzle-orm/xata-http';
++import {getXataClient} from "@/xata";
++
++const xata = getXataClient();
++
++export const db = drizzle(xata);
+\ No newline at end of file
+Index: drizzle/schema.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/drizzle/schema.ts b/drizzle/schema.ts
+new file mode 100644
+--- /dev/null	(date 1755621006587)
++++ b/drizzle/schema.ts	(date 1755621006587)
+@@ -0,0 +1,66 @@
++import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
++
++export const user = pgTable("user", {
++    id: text("id").primaryKey(),
++    name: text("name").notNull(),
++    email: text("email").notNull().unique(),
++    emailVerified: boolean("email_verified")
++        .$defaultFn(() => false)
++        .notNull(),
++    image: text("image"),
++    createdAt: timestamp("created_at")
++        .$defaultFn(() => /* @__PURE__ */ new Date())
++        .notNull(),
++    updatedAt: timestamp("updated_at")
++        .$defaultFn(() => /* @__PURE__ */ new Date())
++        .notNull(),
++});
++
++export const session = pgTable("session", {
++    id: text("id").primaryKey(),
++    expiresAt: timestamp("expires_at").notNull(),
++    token: text("token").notNull().unique(),
++    createdAt: timestamp("created_at").notNull(),
++    updatedAt: timestamp("updated_at").notNull(),
++    ipAddress: text("ip_address"),
++    userAgent: text("user_agent"),
++    userId: text("user_id")
++        .notNull()
++        .references(() => user.id, { onDelete: "cascade" }),
++});
++
++export const account = pgTable("account", {
++    id: text("id").primaryKey(),
++    accountId: text("account_id").notNull(),
++    providerId: text("provider_id").notNull(),
++    userId: text("user_id")
++        .notNull()
++        .references(() => user.id, { onDelete: "cascade" }),
++    accessToken: text("access_token"),
++    refreshToken: text("refresh_token"),
++    idToken: text("id_token"),
++    accessTokenExpiresAt: timestamp("access_token_expires_at"),
++    refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
++    scope: text("scope"),
++    password: text("password"),
++    createdAt: timestamp("created_at").notNull(),
++    updatedAt: timestamp("updated_at").notNull(),
++});
++
++export const verification = pgTable("verification", {
++    id: text("id").primaryKey(),
++    identifier: text("identifier").notNull(),
++    value: text("value").notNull(),
++    expiresAt: timestamp("expires_at").notNull(),
++    createdAt: timestamp("created_at").$defaultFn(
++        () => /* @__PURE__ */ new Date(),
++    ),
++    updatedAt: timestamp("updated_at").$defaultFn(
++        () => /* @__PURE__ */ new Date(),
++    ),
++});
++
++
++export const schema = {
++    user, account, session, verification
++}
+\ No newline at end of file
+Index: drizzle.config.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/drizzle.config.ts b/drizzle.config.ts
+new file mode 100644
+--- /dev/null	(date 1755591436014)
++++ b/drizzle.config.ts	(date 1755591436014)
+@@ -0,0 +1,14 @@
++import { config } from "dotenv";
++import { defineConfig } from "drizzle-kit";
++
++config({ path: "./.env"});
++
++export default defineConfig({
++  schema: "./drizzle/schema.ts",
++  out: "./drizzle/migrations",
++  dialect: "postgresql",
++  dbCredentials: {
++    url: process.env.DATABASE_URL_POSTGRES!,
++    ssl: true, // 👈 force SSL for Xata
++  },
++})
+\ No newline at end of file
+Index: lib/auth-client.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/auth-client.ts b/lib/auth-client.ts
+new file mode 100644
+--- /dev/null	(date 1755619088049)
++++ b/lib/auth-client.ts	(date 1755619088049)
+@@ -0,0 +1,5 @@
++import {createAuthClient} from "better-auth/react"
++
++export const authClient = createAuthClient({
++    baseURL: process.env.NEXT_PUBLIC_BASE_URL!
++})
+\ No newline at end of file
